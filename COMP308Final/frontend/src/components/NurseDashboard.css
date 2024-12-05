@@ -1,0 +1,66 @@
+body {
+  background-color: #fff5f5;
+  font-family: Arial, sans-serif;
+}
+
+.nurse-dashboard {
+  padding: 20px;
+}
+
+.dashboard-header {
+  text-align: center;
+  background: linear-gradient(90deg, #ff7b7b, #ff4d4d);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.dashboard-title {
+  font-size: 2.5rem;
+}
+
+.dashboard-subtitle {
+  font-size: 1.2rem;
+}
+
+.data-section {
+  margin-top: 20px;
+}
+
+.data-section h4 {
+  color: #ff4d4d;
+  margin-bottom: 10px;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.data-card {
+  background: white;
+  border: 1px solid #ffcccc;
+  border-radius: 8px;
+  padding: 15px;
+  width: 300px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.data-card h5 {
+  color: #ff4d4d;
+}
+
+.data-card button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.data-card button:hover {
+  background-color: #e60000;
+}

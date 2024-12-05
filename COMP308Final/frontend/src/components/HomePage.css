@@ -1,0 +1,111 @@
+/* General styling for the homepage */
+body {
+    margin: 0;
+    font-family: "Arial", sans-serif;
+    background-color: #fff5f5;
+  }
+  
+  /* Header styles */
+  .homepage {
+    text-align: center;
+  }
+  
+  .homepage-header {
+    background: linear-gradient(90deg, #ff7b7b, #ff4d4d);
+    color: white;
+    padding: 50px 20px;
+  }
+  
+  .homepage-title {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .homepage-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  
+  /* Search bar styles */
+  .search-bar {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .search-input {
+    width: 300px;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+  }
+  
+  .search-button {
+    background-color: white;
+    color: #ff4d4d;
+    border: 2px solid white;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .search-button:hover {
+    background-color: #ff6666;
+    color: white;
+  }
+  
+  /* Content section */
+  .homepage-content {
+    background-color: #ffe6e6;
+    padding: 50px 20px;
+  }
+  
+  .homepage-content h2 {
+    color: #ff4d4d;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  /* Feature cards */
+  .feature-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .feature-card {
+    background-color: white;
+    border: 1px solid #ffcccc;
+    border-radius: 8px;
+    width: 300px;
+    padding: 20px;
+    text-align: left;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .feature-card h3 {
+    color: #ff4d4d;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .feature-card p {
+    color: #4d4d4d;
+    font-size: 1rem;
+  }
+  
+  /* Responsive design */
+  @media screen and (max-width: 768px) {
+    .search-input {
+      width: 80%;
+    }
+  
+    .feature-cards {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  
