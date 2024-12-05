@@ -41,3 +41,11 @@ export const GET_PATIENT_SYMPTOMS = gql`
     }
   }
 `;
+export const GET_MOTIVATIONAL_TIPS = gql`
+  query GetMotivationalTips($patientId: ID!) {
+    getMotivationalTips(patientId: $patientId) {
+      tip
+      date
+    }
+  }
+`;

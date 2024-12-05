@@ -28,6 +28,17 @@ export const REGISTER_PATIENT = gql`
     }
   }
 `;
+export const ANALYZE_SYMPTOMS = gql`
+  mutation AnalyzeSymptoms($patientId: ID!) {
+    analyzeSymptoms(patientId: $patientId)
+  }
+`;
+
+export const SEND_MOTIVATIONAL_TIP = gql`
+  mutation SendMotivationalTip($patientId: ID!, $tip: String!) {
+    sendMotivationalTip(patientId: $patientId, tip: $tip)
+  }
+`;
 
 export const ADD_DAILY_LOG = gql`
   mutation addDailyLog(

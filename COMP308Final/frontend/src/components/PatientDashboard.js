@@ -1,4 +1,6 @@
 import React from "react";
+import { useQuery } from "@apollo/client";
+import { GET_MOTIVATIONAL_TIPS } from "../graphql/queries";
 import EmergencyAlertForm from "./EmergencyAlertForm";
 import DailyLogForm from "./DailyLogForm";
 import SymptomsChecklistForm from "./SymptomsChecklistForm";
@@ -6,6 +8,11 @@ import "./PatientDashboard.css";
 
 const PatientDashboard = () => {
   const patientId = localStorage.getItem("userId");
+
+  const { data, loading, error } = useQuery(GET_MOTIVATIONAL_TIPS, {
+    variables: { patientId },
+    skip: !patientId,
+  });
 
   if (!patientId) {
     alert("Error: Patient ID not found. Please log in again.");
@@ -41,6 +48,26 @@ const PatientDashboard = () => {
           <SymptomsChecklistForm patientId={patientId} />
         </div>
       </section>
+
+      <section className="motivational-tips">
+  <h3>Motivational Tip From Your Nurse</h3>
+  {loading && <p className="loading-message">Loading motivational tips...</p>}
+  {error && <p className="error-message">Error fetching tips: {error.message}</p>}
+  {data?.getMotivationalTips?.length > 0 ? (
+    <ul className="tips-list">
+      {data.getMotivationalTips.map((tip, index) => (
+        <li key={index} className="tip-card">
+          <p className="tip-text">"{tip.tip}"</p>
+          <p className="tip-date">Sent on: {new Date(tip.date).toLocaleString()}</p>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p className="no-tips-message">No motivational tips available at the moment.</p>
+  )}
+</section>
+
+
     </div>
   );
 };

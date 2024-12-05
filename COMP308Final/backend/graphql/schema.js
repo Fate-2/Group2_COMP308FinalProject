@@ -6,6 +6,8 @@ module.exports = buildSchema(`
     getPatientAlerts(patientId: ID!): [EmergencyAlert!]
     getPatientDailyLogs(patientId: ID!): [DailyLog!]
     getPatientSymptoms(patientId: ID!): [SymptomsChecklist!] # Fetch symptoms
+    getMotivationalTips(patientId: ID!): [MotivationalTip!]
+
   }
 
   type Mutation {
@@ -18,6 +20,8 @@ module.exports = buildSchema(`
     deletePatientVitalSigns(patientId: ID!, logId: ID!): Patient
     addSymptomsChecklist(patientId: ID!, symptoms: [String!]!): Patient # Add symptoms
     deletePatientSymptoms(patientId: ID!, date: String!): Patient
+    sendMotivationalTip(patientId: ID!, tip: String!): Boolean
+
   }
 
   type Nurse {
@@ -59,4 +63,13 @@ module.exports = buildSchema(`
     userId: ID!
     role: String!
   }
+    
+
+
+
+type MotivationalTip {
+  tip: String
+  date: String
+}
+
 `);

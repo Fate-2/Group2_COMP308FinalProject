@@ -11,12 +11,18 @@ const PatientSchema = new mongoose.Schema({
       heartRate: Number,
       bloodPressure: String,
       respiratoryRate: Number,
-      weight: Number,
-    },
+      weight: Number
+        },
   ],
 
 
-  
+  motivationalTip: [
+    {
+    tip: String,
+    date: String
+  },
+  ],
+
   symptomsChecklist: [
     {
       symptoms: [String],

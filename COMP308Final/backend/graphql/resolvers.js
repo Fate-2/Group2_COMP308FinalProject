@@ -178,7 +178,22 @@ module.exports = {
   
     return patient;
   },
+
   
+  sendMotivationalTip: async ({ patientId, tip }) => {
+    const patient = await Patient.findById(patientId);
+    if (!patient) throw new Error("Patient not found.");
   
+    patient.motivationalTip.push({ tip, date: new Date() });
+    await patient.save();
+    return true;
+  },
+  
+  getMotivationalTips: async ({ patientId }) => {
+    const patient = await Patient.findById(patientId);
+    if (!patient) throw new Error("Patient not found.");
+  
+    return patient.motivationalTip;
+  },
 
 };
