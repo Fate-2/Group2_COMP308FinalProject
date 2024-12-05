@@ -11,49 +11,30 @@ import {
   DELETE_PATIENT_VITAL_SIGNS,
   DELETE_EMERGENCY_ALERT,
   DELETE_PATIENT_SYMPTOMS,
-  SEND_MOTIVATIONAL_TIP,
-  ANALYZE_SYMPTOMS,
 } from "../graphql/mutations";
 import "./NurseDashboard.css";
 
 const NurseDashboard = () => {
   const [selectedPatientId, setSelectedPatientId] = useState("");
-<<<<<<< Updated upstream
-  const [motivationalTip, setMotivationalTip] = useState("");
-  const [generatedConditions, setGeneratedConditions] = useState([]);
-=======
   const navigate = useNavigate();
->>>>>>> Stashed changes
 
   // Fetch the list of patients
-  const { data: patientsData, loading: patientsLoading, error: patientsError } = useQuery(GET_PATIENTS);
+  const { data: patientsData, loading: patientsLoading } = useQuery(GET_PATIENTS);
 
   // Fetch alerts for the selected patient
-<<<<<<< Updated upstream
-  const { data: alertsData, loading: alertsLoading, refetch: refetchAlerts } = useQuery(GET_PATIENT_ALERTS, {
-=======
   const { data: alertsData, refetch: refetchAlerts } = useQuery(GET_PATIENT_ALERTS, {
->>>>>>> Stashed changes
     variables: { patientId: selectedPatientId },
     skip: !selectedPatientId,
   });
 
   // Fetch daily logs for the selected patient
-<<<<<<< Updated upstream
-  const { data: dailyLogsData, loading: logsLoading, refetch: refetchDailyLogs } = useQuery(GET_PATIENT_DAILY_LOGS, {
-=======
   const { data: dailyLogsData, refetch: refetchDailyLogs } = useQuery(GET_PATIENT_DAILY_LOGS, {
->>>>>>> Stashed changes
     variables: { patientId: selectedPatientId },
     skip: !selectedPatientId,
   });
 
   // Fetch symptoms for the selected patient
-<<<<<<< Updated upstream
-  const { data: symptomsData, loading: symptomsLoading, refetch: refetchSymptoms } = useQuery(GET_PATIENT_SYMPTOMS, {
-=======
   const { data: symptomsQueryData, refetch: refetchSymptoms } = useQuery(GET_PATIENT_SYMPTOMS, {
->>>>>>> Stashed changes
     variables: { patientId: selectedPatientId },
     skip: !selectedPatientId,
   });
@@ -71,53 +52,26 @@ const NurseDashboard = () => {
     onCompleted: refetchSymptoms,
   });
 
-  const [sendMotivationalTip] = useMutation(SEND_MOTIVATIONAL_TIP);
-
-  const [analyzeSymptoms] = useMutation(ANALYZE_SYMPTOMS, {
-    onCompleted: (data) => setGeneratedConditions(data.analyzeSymptoms),
-  });
-
   // Handlers
   const handlePatientSelect = (e) => {
     setSelectedPatientId(e.target.value);
   };
 
-  const handleSendTip = async (e) => {
-    e.preventDefault();
-    if (!motivationalTip.trim()) return alert("Tip cannot be empty.");
-    try {
-      await sendMotivationalTip({ variables: { patientId: selectedPatientId, tip: motivationalTip } });
-      alert("Motivational tip sent!");
-      setMotivationalTip("");
-    } catch (err) {
-      alert(`Failed to send tip: ${err.message}`);
-    }
+  const handleDeleteAlert = (alertId) => {
+    deleteEmergencyAlert({ variables: { patientId: selectedPatientId, alertId } });
   };
 
-<<<<<<< Updated upstream
-  const handleAnalyzeSymptoms = async () => {
-    if (!symptomsData?.getPatientSymptoms || symptomsData.getPatientSymptoms.length === 0) {
-      return alert("No symptoms data available for analysis.");
-    }
-    try {
-      await analyzeSymptoms({ variables: { patientId: selectedPatientId } });
-    } catch (err) {
-      alert(`Failed to analyze symptoms: ${err.message}`);
-    }
-=======
   const handleDeleteLog = (logId) => {
     deletePatientVitalSigns({ variables: { patientId: selectedPatientId, logId } });
   };
 
   const handleDeleteSymptoms = (symptomDate) => {
     deletePatientSymptoms({ variables: { patientId: selectedPatientId, date: symptomDate } });
->>>>>>> Stashed changes
   };
 
   const handleEdit = (item) => {
     navigate("/edit-page", { state: { editingItem: item, patientId: selectedPatientId } });
   };
-  
 
   return (
     <div className="nurse-dashboard">
@@ -139,7 +93,6 @@ const NurseDashboard = () => {
         </select>
       </div>
 
-<<<<<<< Updated upstream
       {selectedPatientId && (
         <>
           {/* Emergency Alerts */}
@@ -148,107 +101,48 @@ const NurseDashboard = () => {
             <div className="card-container">
               {alertsData?.getPatientAlerts?.map((alert) => (
                 <div key={alert.id} className="data-card">
+                  <h5>Alert</h5>
                   <p>{alert.message}</p>
                   <p>{new Date(alert.date).toLocaleString()}</p>
-                  <button onClick={() => deleteEmergencyAlert({ variables: { patientId: selectedPatientId, alertId: alert.id } })}>
-                    Delete
-                  </button>
+                  <button onClick={() => handleDeleteAlert(alert.id)}>Delete</button>
+                  <button onClick={() => handleEdit({ ...alert, type: "alert" })}>Edit</button>
                 </div>
               ))}
-=======
-      {/* Emergency Alerts */}
-      <section className="data-section">
-        <h4>Emergency Alerts</h4>
-        <div className="card-container">
-          {alertsData?.getPatientAlerts?.map((alert) => (
-            <div key={alert.id} className="data-card">
-              <h5>Alert</h5>
-              <p>{alert.message}</p>
-              <p>{new Date(alert.date).toLocaleString()}</p>
-              <button onClick={() => handleDeleteAlert(alert.id)}>Delete</button>
-              <button onClick={() => handleEdit({ ...alert, type: "alert" })}>Edit</button>
->>>>>>> Stashed changes
             </div>
           </section>
 
-<<<<<<< Updated upstream
           {/* Vital Signs */}
           <section className="data-section">
             <h4>Vital Signs</h4>
             <div className="card-container">
               {dailyLogsData?.getPatientDailyLogs?.map((log) => (
                 <div key={log.id} className="data-card">
+                  <h5>{new Date(log.date).toLocaleString()}</h5>
                   <p>Temperature: {log.temperature}°C</p>
                   <p>Heart Rate: {log.heartRate}</p>
                   <p>Blood Pressure: {log.bloodPressure}</p>
                   <p>Respiratory Rate: {log.respiratoryRate}</p>
-                  <button onClick={() => deletePatientVitalSigns({ variables: { patientId: selectedPatientId, logId: log.id } })}>
-                    Delete
-                  </button>
+                  <button onClick={() => handleDeleteLog(log.id)}>Delete</button>
+                  <button onClick={() => handleEdit({ ...log, type: "log" })}>Edit</button>
                 </div>
               ))}
-=======
-      {/* Vital Signs */}
-      <section className="data-section">
-        <h4>Vital Signs</h4>
-        <div className="card-container">
-          {dailyLogsData?.getPatientDailyLogs?.map((log) => (
-            <div key={log.id} className="data-card">
-              <h5>{new Date(log.date).toLocaleString()}</h5>
-              <p>Temperature: {log.temperature}°C</p>
-              <p>Heart Rate: {log.heartRate}</p>
-              <p>Blood Pressure: {log.bloodPressure}</p>
-              <p>Respiratory Rate: {log.respiratoryRate}</p>
-              <button onClick={() => handleDeleteLog(log.id)}>Delete</button>
-              <button onClick={() => handleEdit({ ...log, type: "log" })}>Edit</button>
->>>>>>> Stashed changes
             </div>
           </section>
 
-<<<<<<< Updated upstream
           {/* Symptoms Checklist */}
           <section className="data-section">
             <h4>Symptoms Checklist</h4>
             <div className="card-container">
-              {symptomsData?.getPatientSymptoms?.map((symptom) => (
+              {symptomsQueryData?.getPatientSymptoms?.map((symptom) => (
                 <div key={symptom.date} className="data-card">
+                  <h5>{new Date(symptom.date).toLocaleString()}</h5>
                   <p>{symptom.symptoms.join(", ")}</p>
-                  <p>{new Date(symptom.date).toLocaleString()}</p>
-                  <button onClick={() => deletePatientSymptoms({ variables: { patientId: selectedPatientId, date: symptom.date } })}>
-                    Delete
-                  </button>
+                  <button onClick={() => handleDeleteSymptoms(symptom.date)}>Delete</button>
+                  <button onClick={() => handleEdit({ ...symptom, type: "symptom" })}>Edit</button>
                 </div>
               ))}
-=======
-      {/* Symptoms Checklist */}
-      <section className="data-section">
-        <h4>Symptoms Checklist</h4>
-        <div className="card-container">
-          {symptomsQueryData?.getPatientSymptoms?.map((symptom) => (
-            <div key={symptom.date} className="data-card">
-              <h5>{new Date(symptom.date).toLocaleString()}</h5>
-              <p>{symptom.symptoms.join(", ")}</p>
-              <button onClick={() => handleDeleteSymptoms(symptom.date)}>Delete</button>
-              <button onClick={() => handleEdit({ ...symptom, type: "symptom" })}>Edit</button>
->>>>>>> Stashed changes
             </div>
           </section>
-
-          <section className="motivational-tip-section">
-            <h4>Send Motivational Tip To This Patient</h4>
-             <form className="motivational-tip-form" onSubmit={handleSendTip}>
-               <textarea
-                className="motivational-textarea"
-                placeholder="Write a motivational tip..."
-                value={motivationalTip}
-                onChange={(e) => setMotivationalTip(e.target.value)}
-                required
-               />
-               <button type="submit" className="motivational-submit-btn">
-                 Send Tip
-                </button>
-             </form>
-           </section>
         </>
       )}
     </div>

@@ -209,43 +209,22 @@ module.exports = {
       date: alert.date.toISOString(),
     }));
   },
-<<<<<<< Updated upstream
 
-  deletePatientSymptoms: async ({ patientId, date }) => {
-    validateObjectId(patientId);
-  
-    const patient = await Patient.findById(patientId);
-    if (!patient) throw new Error("Patient not found.");
-  
-    const symptomsIndex = patient.symptomsChecklist.findIndex(
-      (entry) => entry.date.toISOString() === date
-    );
-  
-    if (symptomsIndex === -1) throw new Error("Symptoms entry not found.");
-  
-    patient.symptomsChecklist.splice(symptomsIndex, 1);
-    await patient.save();
-  
-    return patient;
-  },
-
-  
   sendMotivationalTip: async ({ patientId, tip }) => {
     const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
-  
-    patient.motivationalTip.push({ tip, date: new Date() });
+
+    if (!patient.motivationalTips) patient.motivationalTips = [];
+    patient.motivationalTips.push({ tip, date: new Date() });
     await patient.save();
+
     return true;
   },
-  
+
   getMotivationalTips: async ({ patientId }) => {
     const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
-  
-    return patient.motivationalTip;
-  },
 
-=======
->>>>>>> Stashed changes
+    return patient.motivationalTips || [];
+  },
 };
