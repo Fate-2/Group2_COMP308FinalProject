@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import NurseDashboard from "./components/NurseDashboard";
 import PatientDashboard from "./components/PatientDashboard";
+import EditPage from "./components/EditPage"; 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -34,6 +35,14 @@ const App = () => {
           element={
             <ProtectedRoute allowedRoles={["Patient"]}>
               <PatientDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-page"
+          element={
+            <ProtectedRoute allowedRoles={["Nurse"]}>
+              <EditPage />
             </ProtectedRoute>
           }
         />

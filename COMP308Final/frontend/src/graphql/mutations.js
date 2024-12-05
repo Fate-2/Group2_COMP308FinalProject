@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 
+// Login Mutation
 export const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -42,49 +43,47 @@ export const SEND_MOTIVATIONAL_TIP = gql`
 
 export const ADD_DAILY_LOG = gql`
   mutation addDailyLog(
-  $patientId: ID!,
-  $temperature: Float,
-  $heartRate: Float,
-  $bloodPressure: String,
-  $respiratoryRate: Float,
-  $weight: Float
-) {
-  addDailyLog(
-    patientId: $patientId,
-    temperature: $temperature,
-    heartRate: $heartRate,
-    bloodPressure: $bloodPressure,
-    respiratoryRate: $respiratoryRate,
-    weight: $weight
+    $patientId: ID!
+    $temperature: Float
+    $heartRate: Float
+    $bloodPressure: String
+    $respiratoryRate: Float
+    $weight: Float
   ) {
-    id
-    dailyLogs {
-      date
-      temperature
-      heartRate
-      bloodPressure
-      respiratoryRate
-      weight
+    addDailyLog(
+      patientId: $patientId
+      temperature: $temperature
+      heartRate: $heartRate
+      bloodPressure: $bloodPressure
+      respiratoryRate: $respiratoryRate
+      weight: $weight
+    ) {
+      id
+      dailyLogs {
+        date
+        temperature
+        heartRate
+        bloodPressure
+        respiratoryRate
+        weight
+      }
     }
   }
-}
 `;
-
-
 
 export const ADD_PATIENT_VITAL_SIGNS = gql`
   mutation addPatientVitalSigns(
-    $patientId: ID!,
-    $temperature: Float,
-    $heartRate: Float,
-    $bloodPressure: String,
+    $patientId: ID!
+    $temperature: Float
+    $heartRate: Float
+    $bloodPressure: String
     $respiratoryRate: Float
   ) {
     addPatientVitalSigns(
-      patientId: $patientId,
-      temperature: $temperature,
-      heartRate: $heartRate,
-      bloodPressure: $bloodPressure,
+      patientId: $patientId
+      temperature: $temperature
+      heartRate: $heartRate
+      bloodPressure: $bloodPressure
       respiratoryRate: $respiratoryRate
     ) {
       dailyLogs {
@@ -113,11 +112,22 @@ export const DELETE_PATIENT_VITAL_SIGNS = gql`
   }
 `;
 
-
 export const ADD_EMERGENCY_ALERT = gql`
   mutation addEmergencyAlert($patientId: ID!, $message: String!) {
     addEmergencyAlert(patientId: $patientId, message: $message) {
       emergencyAlerts {
+        message
+        date
+      }
+    }
+  }
+`;
+
+export const DELETE_EMERGENCY_ALERT = gql`
+  mutation deleteEmergencyAlert($patientId: ID!, $alertId: ID!) {
+    deleteEmergencyAlert(patientId: $patientId, alertId: $alertId) {
+      emergencyAlerts {
+        id
         message
         date
       }
@@ -136,9 +146,8 @@ export const ADD_SYMPTOMS_CHECKLIST = gql`
   }
 `;
 
-
 export const DELETE_PATIENT_SYMPTOMS = gql`
-  mutation DeletePatientSymptoms($patientId: ID!, $date: String!) {
+  mutation deletePatientSymptoms($patientId: ID!, $date: String!) {
     deletePatientSymptoms(patientId: $patientId, date: $date) {
       symptomsChecklist {
         symptoms
@@ -148,10 +157,23 @@ export const DELETE_PATIENT_SYMPTOMS = gql`
   }
 `;
 
-
 export const EDIT_DAILY_LOG = gql`
-  mutation editDailyLog($patientId: ID!, $logId: ID!, $temperature: Float, $heartRate: Float, $bloodPressure: String, $respiratoryRate: Float) {
-    editDailyLog(patientId: $patientId, logId: $logId, temperature: $temperature, heartRate: $heartRate, bloodPressure: $bloodPressure, respiratoryRate: $respiratoryRate) {
+  mutation editDailyLog(
+    $patientId: ID!
+    $logId: ID!
+    $temperature: Float
+    $heartRate: Float
+    $bloodPressure: String
+    $respiratoryRate: Float
+  ) {
+    editDailyLog(
+      patientId: $patientId
+      logId: $logId
+      temperature: $temperature
+      heartRate: $heartRate
+      bloodPressure: $bloodPressure
+      respiratoryRate: $respiratoryRate
+    ) {
       dailyLogs {
         id
         date
@@ -163,23 +185,58 @@ export const EDIT_DAILY_LOG = gql`
     }
   }
 `;
+
+export const UPDATE_EMERGENCY_ALERT = gql`
+  mutation updateEmergencyAlert($patientId: ID!, $alertId: ID!, $message: String!) {
+    updateEmergencyAlert(patientId: $patientId, alertId: $alertId, message: $message) {
+      id
+      message
+      date
+    }
+  }
+`;
+
+export const UPDATE_PATIENT_VITAL_SIGNS = gql`
+  mutation updatePatientVitalSigns(
+    $patientId: ID!
+    $logId: ID!
+    $temperature: Float
+    $heartRate: Float
+    $bloodPressure: String
+    $respiratoryRate: Float
+  ) {
+    updatePatientVitalSigns(
+      patientId: $patientId
+      logId: $logId
+      temperature: $temperature
+      heartRate: $heartRate
+      bloodPressure: $bloodPressure
+      respiratoryRate: $respiratoryRate
+    ) {
+      id
+      date
+      temperature
+      heartRate
+      bloodPressure
+      respiratoryRate
+    }
+  }
+`;
+
+export const UPDATE_PATIENT_SYMPTOMS = gql`
+  mutation updatePatientSymptoms($patientId: ID!, $date: String!, $symptoms: [String!]!) {
+    updatePatientSymptoms(patientId: $patientId, date: $date, symptoms: $symptoms) {
+      date
+      symptoms
+    }
+  }
+`;
+
 export const DELETE_DAILY_LOG = gql`
   mutation deleteDailyLog($patientId: ID!, $logId: ID!) {
     deleteDailyLog(patientId: $patientId, logId: $logId) {
       dailyLogs {
         id
-      }
-    }
-  }
-`;
-
-export const DELETE_EMERGENCY_ALERT = gql`
-  mutation deleteEmergencyAlert($patientId: ID!, $alertId: ID!) {
-    deleteEmergencyAlert(patientId: $patientId, alertId: $alertId) {
-      emergencyAlerts {
-        id
-        message
-        date
       }
     }
   }

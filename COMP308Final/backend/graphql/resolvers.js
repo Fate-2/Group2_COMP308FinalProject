@@ -1,8 +1,10 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+const { ObjectId } = require("mongodb");
 const Nurse = require("../models/Nurse");
 const Patient = require("../models/Patient");
 
+// Validate MongoDB ObjectId
 const validateObjectId = (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error("Invalid ID format.");
@@ -43,7 +45,7 @@ module.exports = {
   addEmergencyAlert: async ({ patientId, message }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(patientId);
+    const patient = await Patient.findById(ObjectId(patientId));
     if (!patient) throw new Error("Patient not found.");
 
     const emergencyAlert = { message, date: new Date() };
@@ -53,59 +55,136 @@ module.exports = {
     return patient;
   },
 
-  getPatients: async () => {
-    return await Patient.find();
-  },
-
-  addPatientVitalSigns: async ({ patientId, temperature, heartRate, bloodPressure, respiratoryRate }) => {
+  updateEmergencyAlert: async ({ patientId, alertId, message }) => {
     validateObjectId(patientId);
+    validateObjectId(alertId);
 
-    const patient = await Patient.findById(patientId);
+    const patient = await Patient.findById(ObjectId(patientId));
     if (!patient) throw new Error("Patient not found.");
 
-    const vitalSigns = { date: new Date(), temperature, heartRate, bloodPressure, respiratoryRate };
+    const alert = patient.emergencyAlerts.id(alertId);
+    if (!alert) throw new Error("Alert not found.");
+
+    alert.message = message;
+    await patient.save();
+
+    return alert;
+  },
+
+  addPatientVitalSigns: async ({ patientId, temperature, heartRate, bloodPressure, respiratoryRate, weight }) => {
+    validateObjectId(patientId);
+
+    const patient = await Patient.findById(ObjectId(patientId));
+    if (!patient) throw new Error("Patient not found.");
+
+    const vitalSigns = { date: new Date(), temperature, heartRate, bloodPressure, respiratoryRate, weight };
     patient.dailyLogs.push(vitalSigns);
     await patient.save();
 
     return patient;
   },
 
+  updatePatientVitalSigns: async ({ patientId, logId, temperature, heartRate, bloodPressure, respiratoryRate }) => {
+    validateObjectId(patientId);
+    validateObjectId(logId);
+
+    const patient = await Patient.findById(ObjectId(patientId));
+    if (!patient) throw new Error("Patient not found.");
+
+    const log = patient.dailyLogs.id(logId);
+    if (!log) throw new Error("Log not found.");
+
+    log.temperature = temperature || log.temperature;
+    log.heartRate = heartRate || log.heartRate;
+    log.bloodPressure = bloodPressure || log.bloodPressure;
+    log.respiratoryRate = respiratoryRate || log.respiratoryRate;
+
+    await patient.save();
+
+    return log;
+  },
+
   deletePatientVitalSigns: async ({ patientId, logId }) => {
     validateObjectId(patientId);
     validateObjectId(logId);
 
-    const patient = await Patient.findById(patientId);
+    const patient = await Patient.findById(ObjectId(patientId));
     if (!patient) throw new Error("Patient not found.");
 
-    // Find the log to delete
     const logIndex = patient.dailyLogs.findIndex((log) => log._id.toString() === logId);
     if (logIndex === -1) throw new Error("Vital sign log not found.");
 
-    // Remove the log
     patient.dailyLogs.splice(logIndex, 1);
     await patient.save();
 
-    return patient; // Return the updated patient data
-},
+    return patient;
+  },
 
-
-  getPatientAlerts: async ({ patientId }) => {
+  addSymptomsChecklist: async ({ patientId, symptoms }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(patientId);
+    const patient = await Patient.findById(ObjectId(patientId));
     if (!patient) throw new Error("Patient not found.");
 
-    return patient.emergencyAlerts.map((alert) => ({
-      id: alert._id.toString(),
-      message: alert.message,
-      date: alert.date.toISOString(),
+    const symptomsChecklist = { symptoms, date: new Date() };
+    patient.symptomsChecklist.push(symptomsChecklist);
+    await patient.save();
+
+    return patient;
+  },
+
+  updatePatientSymptoms: async ({ patientId, date, symptoms }) => {
+    validateObjectId(patientId);
+
+    const patient = await Patient.findById(ObjectId(patientId));
+    if (!patient) throw new Error("Patient not found.");
+
+    const symptomEntry = patient.symptomsChecklist.find(
+      (entry) => entry.date.toISOString() === date
+    );
+
+    if (!symptomEntry) throw new Error("Symptom entry not found.");
+
+    symptomEntry.symptoms = symptoms;
+    await patient.save();
+
+    return symptomEntry;
+  },
+
+  deletePatientSymptoms: async ({ patientId, date }) => {
+    validateObjectId(patientId);
+
+    const patient = await Patient.findById(ObjectId(patientId));
+    if (!patient) throw new Error("Patient not found.");
+
+    const symptomsIndex = patient.symptomsChecklist.findIndex(
+      (entry) => entry.date.toISOString() === date
+    );
+
+    if (symptomsIndex === -1) throw new Error("Symptoms entry not found.");
+
+    patient.symptomsChecklist.splice(symptomsIndex, 1);
+    await patient.save();
+
+    return patient;
+  },
+
+  getPatientSymptoms: async ({ patientId }) => {
+    validateObjectId(patientId);
+
+    const patient = await Patient.findById(ObjectId(patientId));
+    if (!patient) throw new Error("Patient not found.");
+
+    return patient.symptomsChecklist.map((entry) => ({
+      symptoms: entry.symptoms,
+      date: entry.date.toISOString(),
     }));
   },
 
   getPatientDailyLogs: async ({ patientId }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(patientId);
+    const patient = await Patient.findById(ObjectId(patientId));
     if (!patient) throw new Error("Patient not found.");
 
     return patient.dailyLogs.map((log) => ({
@@ -117,49 +196,20 @@ module.exports = {
       respiratoryRate: log.respiratoryRate,
     }));
   },
-  deleteEmergencyAlert: async ({ patientId, alertId }) => {
-    validateObjectId(patientId);
-    validateObjectId(alertId);
 
-    const patient = await Patient.findById(patientId);
-    if (!patient) throw new Error("Patient not found.");
-
-    const alertIndex = patient.emergencyAlerts.findIndex((alert) => alert._id.toString() === alertId);
-    if (alertIndex === -1) throw new Error("Alert not found.");
-
-    patient.emergencyAlerts.splice(alertIndex, 1);
-    await patient.save();
-
-    return patient;
-  },
-
-  addSymptomsChecklist: async ({ patientId, symptoms }) => {
+  getPatientAlerts: async ({ patientId }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(patientId);
+    const patient = await Patient.findById(ObjectId(patientId));
     if (!patient) throw new Error("Patient not found.");
 
-    const symptomsChecklist = { symptoms, date: new Date() };
-    if (!patient.symptomsChecklist) {
-      patient.symptomsChecklist = []; // Initialize if undefined
-    }
-    patient.symptomsChecklist.push(symptomsChecklist);
-    await patient.save();
-
-    return patient;
-  },
-
-  getPatientSymptoms: async ({ patientId }) => {
-    validateObjectId(patientId);
-
-    const patient = await Patient.findById(patientId);
-    if (!patient) throw new Error("Patient not found.");
-
-    return patient.symptomsChecklist.map((entry) => ({
-      symptoms: entry.symptoms,
-      date: entry.date.toISOString(),
+    return patient.emergencyAlerts.map((alert) => ({
+      id: alert._id.toString(),
+      message: alert.message,
+      date: alert.date.toISOString(),
     }));
   },
+<<<<<<< Updated upstream
 
   deletePatientSymptoms: async ({ patientId, date }) => {
     validateObjectId(patientId);
@@ -196,4 +246,6 @@ module.exports = {
     return patient.motivationalTip;
   },
 
+=======
+>>>>>>> Stashed changes
 };
