@@ -5,13 +5,11 @@ module.exports = buildSchema(`
     getPatients: [Patient!] 
     getPatientAlerts(patientId: ID!): [EmergencyAlert!]
     getPatientDailyLogs(patientId: ID!): [DailyLog!]
-<<<<<<< Updated upstream
+
     getPatientSymptoms(patientId: ID!): [SymptomsChecklist!] # Fetch symptoms
     getMotivationalTips(patientId: ID!): [MotivationalTip!]
 
-=======
-    getPatientSymptoms(patientId: ID!): [SymptomsChecklist!] 
->>>>>>> Stashed changes
+
   }
 
   type Mutation {
