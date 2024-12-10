@@ -45,7 +45,7 @@ module.exports = {
   addEmergencyAlert: async ({ patientId, message }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
 
     const emergencyAlert = { message, date: new Date() };
@@ -59,7 +59,7 @@ module.exports = {
     validateObjectId(patientId);
     validateObjectId(alertId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
 
     const alert = patient.emergencyAlerts.id(alertId);
@@ -74,7 +74,7 @@ module.exports = {
   addPatientVitalSigns: async ({ patientId, temperature, heartRate, bloodPressure, respiratoryRate, weight }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
 
     const vitalSigns = { date: new Date(), temperature, heartRate, bloodPressure, respiratoryRate, weight };
@@ -88,7 +88,7 @@ module.exports = {
     validateObjectId(patientId);
     validateObjectId(logId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
 
     const log = patient.dailyLogs.id(logId);
@@ -108,7 +108,7 @@ module.exports = {
     validateObjectId(patientId);
     validateObjectId(logId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
 
     const logIndex = patient.dailyLogs.findIndex((log) => log._id.toString() === logId);
@@ -123,7 +123,7 @@ module.exports = {
   addSymptomsChecklist: async ({ patientId, symptoms }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
 
     const symptomsChecklist = { symptoms, date: new Date() };
@@ -136,7 +136,7 @@ module.exports = {
   updatePatientSymptoms: async ({ patientId, date, symptoms }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
 
     const symptomEntry = patient.symptomsChecklist.find(
@@ -154,7 +154,7 @@ module.exports = {
   deletePatientSymptoms: async ({ patientId, date }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
 
     const symptomsIndex = patient.symptomsChecklist.findIndex(
@@ -172,7 +172,7 @@ module.exports = {
   getPatientSymptoms: async ({ patientId }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
 
     return patient.symptomsChecklist.map((entry) => ({
@@ -184,7 +184,8 @@ module.exports = {
   getPatientDailyLogs: async ({ patientId }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
+
     if (!patient) throw new Error("Patient not found.");
 
     return patient.dailyLogs.map((log) => ({
@@ -200,7 +201,8 @@ module.exports = {
   getPatientAlerts: async ({ patientId }) => {
     validateObjectId(patientId);
 
-    const patient = await Patient.findById(ObjectId(patientId));
+    const patient = await Patient.findById(patientId);
+
     if (!patient) throw new Error("Patient not found.");
 
     return patient.emergencyAlerts.map((alert) => ({
@@ -211,7 +213,7 @@ module.exports = {
   },
 
   sendMotivationalTip: async ({ patientId, tip }) => {
-    const patient = await Patient.findById(patientId);
+     const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
 
     if (!patient.motivationalTips) patient.motivationalTips = [];
@@ -219,6 +221,26 @@ module.exports = {
     await patient.save();
 
     return true;
+  },
+
+  getPatients: async () => {
+    console.log("getPatients resolver called"); // Debugging log
+    try {
+      const patients = await Patient.find(); // Fetch all patients from the database
+      console.log("Patients fetched:", patients); // Debugging log
+      return patients.map((patient) => ({
+        id: patient._id.toString(),
+        name: patient.name,
+        email: patient.email,
+        dailyLogs: patient.dailyLogs,
+        motivationalTip: patient.motivationalTip,
+        symptomsChecklist: patient.symptomsChecklist,
+        emergencyAlerts: patient.emergencyAlerts,
+      }));
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+      throw new Error("Failed to fetch patients.");
+    }
   },
 
   getMotivationalTips: async ({ patientId }) => {
