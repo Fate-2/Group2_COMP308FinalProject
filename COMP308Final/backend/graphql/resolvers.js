@@ -70,6 +70,26 @@ module.exports = {
 
     return alert;
   },
+  
+  deleteEmergencyAlert: async ({ patientId, alertId }) => {
+    validateObjectId(patientId); // Validate the patient ID
+    validateObjectId(alertId); // Validate the alert ID
+  
+    const patient = await Patient.findById(patientId); // Find the patient by ID
+    if (!patient) throw new Error("Patient not found.");
+  
+    const alertIndex = patient.emergencyAlerts.findIndex(
+      (alert) => alert._id.toString() === alertId
+    ); // Find the index of the alert to delete
+  
+    if (alertIndex === -1) throw new Error("Emergency alert not found.");
+  
+    patient.emergencyAlerts.splice(alertIndex, 1); // Remove the alert from the array
+    await patient.save(); // Save the changes to the database
+  
+    return patient; // Return the updated patient object
+  },
+  
 
   addPatientVitalSigns: async ({ patientId, temperature, heartRate, bloodPressure, respiratoryRate, weight }) => {
     validateObjectId(patientId);
