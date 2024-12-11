@@ -233,15 +233,16 @@ module.exports = {
   },
 
   sendMotivationalTip: async ({ patientId, tip }) => {
-     const patient = await Patient.findById(patientId);
+    const patient = await Patient.findById(patientId);
     if (!patient) throw new Error("Patient not found.");
-
+  
     if (!patient.motivationalTips) patient.motivationalTips = [];
     patient.motivationalTips.push({ tip, date: new Date() });
     await patient.save();
-
-    return true;
+  
+    return patient; 
   },
+  
 
   getPatients: async () => {
     console.log("getPatients resolver called"); // Debugging log

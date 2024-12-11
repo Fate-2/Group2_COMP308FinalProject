@@ -15,7 +15,6 @@ const PatientDashboard = () => {
   });
 
   if (!patientId) {
-    alert("Error: Patient ID not found. Please log in again.");
     return (
       <div className="error-message">
         <p>Error: Patient ID not found. Please log in again.</p>
@@ -50,10 +49,12 @@ const PatientDashboard = () => {
       </section>
 
       <section className="motivational-tips">
-  <h3>Motivational Tip From Your Nurse</h3>
-  {loading && <p className="loading-message">Loading motivational tips...</p>}
-  {error && <p className="error-message">Error fetching tips: {error.message}</p>}
-  {data?.getMotivationalTips?.length > 0 ? (
+  <h3>Motivational Tips From Your Nurse</h3>
+  {loading ? (
+    <p className="loading-message">Loading motivational tips...</p>
+  ) : error ? (
+    <p className="error-message">Error fetching tips: {error.message}</p>
+  ) : data?.getMotivationalTips?.length > 0 ? (
     <ul className="tips-list">
       {data.getMotivationalTips.map((tip, index) => (
         <li key={index} className="tip-card">
@@ -66,8 +67,6 @@ const PatientDashboard = () => {
     <p className="no-tips-message">No motivational tips available at the moment.</p>
   )}
 </section>
-
-
     </div>
   );
 };

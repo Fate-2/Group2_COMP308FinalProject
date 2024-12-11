@@ -37,9 +37,16 @@ export const ANALYZE_SYMPTOMS = gql`
 
 export const SEND_MOTIVATIONAL_TIP = gql`
   mutation SendMotivationalTip($patientId: ID!, $tip: String!) {
-    sendMotivationalTip(patientId: $patientId, tip: $tip)
+    sendMotivationalTip(patientId: $patientId, tip: $tip) {
+      id
+      motivationalTips {
+        tip
+        date
+      }
+    }
   }
 `;
+
 
 export const ADD_DAILY_LOG = gql`
   mutation addDailyLog(

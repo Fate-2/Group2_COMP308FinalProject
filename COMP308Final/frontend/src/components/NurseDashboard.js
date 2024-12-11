@@ -11,11 +11,13 @@ import {
   DELETE_PATIENT_VITAL_SIGNS,
   DELETE_EMERGENCY_ALERT,
   DELETE_PATIENT_SYMPTOMS,
+  SEND_MOTIVATIONAL_TIP,
 } from "../graphql/mutations";
 import "./NurseDashboard.css";
 
 const NurseDashboard = () => {
   const [selectedPatientId, setSelectedPatientId] = useState("");
+  const [motivationalTip, setMotivationalTip] = useState(""); // State for motivational tips
   const navigate = useNavigate();
 
   // Fetch the list of patients
@@ -52,6 +54,8 @@ const NurseDashboard = () => {
     onCompleted: refetchSymptoms,
   });
 
+  const [sendMotivationalTip] = useMutation(SEND_MOTIVATIONAL_TIP);
+
   // Handlers
   const handlePatientSelect = (e) => {
     setSelectedPatientId(e.target.value);
@@ -71,6 +75,18 @@ const NurseDashboard = () => {
 
   const handleEdit = (item) => {
     navigate("/edit-page", { state: { editingItem: item, patientId: selectedPatientId } });
+  };
+
+  const handleSendMotivationalTip = async (e) => {
+    e.preventDefault();
+    try {
+      await sendMotivationalTip({ variables: { patientId: selectedPatientId, tip: motivationalTip } });
+      alert("Motivational Tip sent successfully!");
+      setMotivationalTip(""); // Clear the input after sending
+    } catch (error) {
+      console.error("Error sending motivational tip:", error);
+      alert("Failed to send motivational tip.");
+    }
   };
 
   return (
@@ -142,6 +158,27 @@ const NurseDashboard = () => {
                 </div>
               ))}
             </div>
+          </section>
+
+          {/* Send Motivational Tip */}
+          <section className="data-section">
+            <h4>Send Motivational Tip</h4>
+            <form onSubmit={handleSendMotivationalTip}>
+              <div className="form-group">
+                <label htmlFor="motivationalTip">Motivational Tip</label>
+                <textarea
+                  id="motivationalTip"
+                  className="form-control"
+                  rows="3"
+                  value={motivationalTip}
+                  onChange={(e) => setMotivationalTip(e.target.value)}
+                  required
+                />
+              </div>
+              <button type="submit" className="btn btn-danger">
+                Send Tip
+              </button>
+            </form>
           </section>
         </>
       )}

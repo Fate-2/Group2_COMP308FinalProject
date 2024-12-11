@@ -44,7 +44,7 @@ module.exports = buildSchema(`
     deleteEmergencyAlert(patientId: ID!, alertId: ID!): Patient
     deletePatientVitalSigns(patientId: ID!, logId: ID!): Patient
     deletePatientSymptoms(patientId: ID!, date: String!): Patient
-    sendMotivationalTip(patientId: ID!, tip: String!): Boolean
+    sendMotivationalTip(patientId: ID!, tip: String!): Patient
 
   }
 
@@ -61,6 +61,7 @@ module.exports = buildSchema(`
     dailyLogs: [DailyLog!]
     emergencyAlerts: [EmergencyAlert!]
     symptomsChecklist: [SymptomsChecklist!]
+    motivationalTips: [MotivationalTip!]
   }
 
   type EmergencyAlert {
